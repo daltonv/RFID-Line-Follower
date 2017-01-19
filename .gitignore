@@ -1,0 +1,7 @@
+# CCS stuff to not include #
+Debug/
+Release/
+.xdchelp
+.config/
+.launches/
+targetConfigs/
