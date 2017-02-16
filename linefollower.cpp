@@ -5,16 +5,17 @@
  *      Author: dalto
  */
 
+
 #include <linefollower.h>
 
-linefollower::linefollower()
-{
-    // TODO Auto-generated constructor stub
+linefollower::linefollower() {
 
 }
 
-linefollower::~linefollower()
-{
-    // TODO Auto-generated destructor stub
+linefollower::~linefollower() {
+
 }
 
+void linefollower::togglePort() {
+
+}
