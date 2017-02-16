@@ -33,6 +33,22 @@ const Timer_A_CompareModeConfig compareConfig_PWM2 =
         TIMER_PERIOD                                // duty cycle initialized to 0
 };
 
+const Timer_A_CompareModeConfig compareConfig_PWM3 =
+{
+        TIMER_A_CAPTURECOMPARE_REGISTER_3,          // Use CCR2
+        TIMER_A_CAPTURECOMPARE_INTERRUPT_DISABLE,   // Disable CCR interrupt
+        TIMER_A_OUTPUTMODE_TOGGLE_SET,              // Toggle output but
+        TIMER_PERIOD                                // duty cycle initialized to 0
+};
+
+const Timer_A_CompareModeConfig compareConfig_PWM4 =
+{
+        TIMER_A_CAPTURECOMPARE_REGISTER_4,          // Use CCR2
+        TIMER_A_CAPTURECOMPARE_INTERRUPT_DISABLE,   // Disable CCR interrupt
+        TIMER_A_OUTPUTMODE_TOGGLE_SET,              // Toggle output but
+        TIMER_PERIOD                                // duty cycle initialized to 0
+};
+
 Motor::Motor(unsigned int port0, unsigned int pin0, unsigned int port1, unsigned int pin1)
 {
     this->port0 = port0;
