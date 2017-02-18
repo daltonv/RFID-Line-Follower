@@ -12,20 +12,16 @@
 /* DriverLib Includes */
 #include <ti/devices/msp432p4xx/driverlib/driverlib.h>
 
-#define TIMER_PERIOD 1000
-
 class Motor
 {
 public:
-    Motor(unsigned int port0, unsigned int pin0, unsigned int port1, unsigned int pin1);
+    Motor(uint_fast16_t reg1, uint_fast16_t reg2);
     virtual ~Motor();
 
-    unsigned int port0;
-    unsigned int pin0;
-    unsigned int port1;
-    unsigned int pin1;
+    Timer_A_PWMConfig pwmConfig1;
+    Timer_A_PWMConfig pwmConfig2;
 
-    void setDir(unsigned int dir);
+    void setSpeed(int speed);
 };
 
 #endif /* MOTOR_H_ */

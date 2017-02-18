@@ -61,16 +61,20 @@
 #include <stdbool.h>
 
 #include "linefollower.h"
+#include "MotorControl.h"
 
 int main(void)
 {
     /* Stop Watchdog  */
     MAP_WDT_A_holdTimer();
 
-    linefollower test;
+    /* Setting DCO to 24MHz */
+    MAP_CS_setDCOCenteredFrequency(CS_DCO_FREQUENCY_24);
+
+    MotorControl motorTest;
+    motorTest.straight(3200);
 
     while(1)
     {
-        test.togglePort();
     }
 }

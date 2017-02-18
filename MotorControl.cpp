@@ -7,14 +7,19 @@
 
 #include <MotorControl.h>
 
-MotorControl::MotorControl()
+MotorControl::MotorControl() : leftMotor(TIMER_A_CAPTURECOMPARE_REGISTER_1, TIMER_A_CAPTURECOMPARE_REGISTER_2),
+                               rightMotor(TIMER_A_CAPTURECOMPARE_REGISTER_3, TIMER_A_CAPTURECOMPARE_REGISTER_4)
 {
-    // TODO Auto-generated constructor stub
-
+    MAP_GPIO_setAsPeripheralModuleFunctionOutputPin(GPIO_PORT_P2, GPIO_PIN5 + GPIO_PIN4 + GPIO_PIN6 + GPIO_PIN7, GPIO_PRIMARY_MODULE_FUNCTION);
 }
 
 MotorControl::~MotorControl()
 {
     // TODO Auto-generated destructor stub
+}
+
+MotorControl::straight(int speed) {
+    this->leftMotor.setSpeed(speed);
+    this->rightMotor.setSpeed(speed);
 }
 
