@@ -72,7 +72,7 @@ int main(void)
     MAP_CS_setDCOCenteredFrequency(CS_DCO_FREQUENCY_24);
 
     MotorControl motorTest;
-    motorTest.straight(3200);
+    motorTest.straight(-900);
 
     while(1)
     {
