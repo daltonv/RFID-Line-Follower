@@ -33,8 +33,8 @@
 *  MSP432P401R Interrupt Vector Table
 * 
 *****************************************************************************/
-
 #include <stdint.h>
+#define __NOP __nop
 
 /* Linker variable that marks the top of the stack. */
 extern unsigned long __STACK_END;

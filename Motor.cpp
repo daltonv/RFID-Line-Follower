@@ -36,11 +36,11 @@ Motor::~Motor()
 void Motor::setSpeed(int speed) {
     if (speed > 0) {
         pwmConfig1.dutyCycle = speed;
-        pwmConfig2.dutyCycle = 0;
+        pwmConfig2.dutyCycle = 1000;
     }
     else {
         speed = speed * -1;
-        pwmConfig1.dutyCycle = 0;
+        pwmConfig1.dutyCycle = 1000;
         pwmConfig2.dutyCycle = speed;
     }
 

@@ -22,7 +22,10 @@ public:
     Motor leftMotor;
     Motor rightMotor;
 
-    straight(int speed);
+    void straight(int speed);
+    void turnLeftHard(int speed);
+    void turnRightHard(int speed);
+    void stop();
 };
 
 #endif /* MOTORCONTROL_H_ */

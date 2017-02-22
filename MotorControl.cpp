@@ -18,8 +18,22 @@ MotorControl::~MotorControl()
     // TODO Auto-generated destructor stub
 }
 
-MotorControl::straight(int speed) {
+void MotorControl::straight(int speed) {
     this->leftMotor.setSpeed(speed);
     this->rightMotor.setSpeed(speed);
 }
 
+void MotorControl::turnLeftHard(int speed) {
+    this->leftMotor.setSpeed(speed);
+    this->rightMotor.setSpeed(0);
+}
+
+void MotorControl::turnRightHard(int speed) {
+    this->leftMotor.setSpeed(0);
+    this->rightMotor.setSpeed(speed);
+}
+
+void MotorControl::stop() {
+    this->leftMotor.setSpeed(0);
+    this->rightMotor.setSpeed(0);
+}
