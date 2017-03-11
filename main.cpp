@@ -1,3 +1,4 @@
+
 /*
  * -------------------------------------------
  *    MSP432 DriverLib - v3_50_00_02 
@@ -60,7 +61,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-#include "linefollower.h"
+#include "LineSensor.h"
 #include "MotorControl.h"
 
 int main(void)
@@ -72,7 +73,8 @@ int main(void)
     MAP_CS_setDCOCenteredFrequency(CS_DCO_FREQUENCY_24);
 
     MotorControl motorTest;
-    motorTest.straight(-200);
+    LineSensor lineTest;
+    motorTest.straight(0);
 
     while(1)
     {

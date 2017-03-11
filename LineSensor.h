@@ -5,20 +5,21 @@
  *      Author: dalto
  */
 
-#ifndef LINEFOLLOWER_H_
-#define LINEFOLLOWER_H_
+#ifndef LINESENSOR_H_
+#define LINESENSOR_H_
 
 #define __NOP __nop
 /* DriverLib Includes */
 #include <ti/devices/msp432p4xx/driverlib/driverlib.h>
 
-class linefollower
+class LineSensor
 {
 public:
-    linefollower();
-    virtual ~linefollower();
+    LineSensor();
+    virtual ~LineSensor();
 
-    void togglePort();
+    void irOff();
+    void irOn();
 };
 
-#endif /* LINEFOLLOWER_H_ */
+#endif /* LINESENSOR_H_ */
