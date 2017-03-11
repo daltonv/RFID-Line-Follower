@@ -53,6 +53,9 @@ LineSensor::LineSensor() {
     /* enable IR LED switch as output */
     MAP_GPIO_setAsOutputPin(GPIO_PORT_P9, GPIO_PIN1);
 
+    MAP_GPIO_setAsOutputPin(GPIO_PORT_P4, GPIO_PIN0 | GPIO_PIN1 | GPIO_PIN2 | GPIO_PIN3 | GPIO_PIN4 | GPIO_PIN5);
+    MAP_GPIO_setAsOutputPin(GPIO_PORT_P6, GPIO_PIN0 | GPIO_PIN1);
+
     /* Configuring Sample Timer */
     MAP_ADC14_enableSampleTimer(ADC_AUTOMATIC_ITERATION);
 
@@ -91,10 +94,9 @@ extern "C" {
         {
             MAP_ADC14_getMultiSequenceResult(resultsBuffer);
 
-            //curADCResult = MAP_ADC14_getResult(ADC_MEM0);
-            //normalizedADCRes = (curADCResult * 3.3) / 16384;
-
-            //printf(EUSCI_A0_BASE, "ADCResult:   %i\r\n", curADCResult);
+            for(int i=0; i<7; i++) {
+                if ()
+            }
 
             MAP_ADC14_toggleConversionTrigger();
         }
