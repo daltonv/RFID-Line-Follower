@@ -94,9 +94,60 @@ extern "C" {
         {
             MAP_ADC14_getMultiSequenceResult(resultsBuffer);
 
-            for(int i=0; i<7; i++) {
-                if ()
+            int limit = 7000;
+            if(resultsBuffer[0] < 3000) {
+                MAP_GPIO_setOutputHighOnPin(GPIO_PORT_P4, GPIO_PIN5);
             }
+            else{
+                MAP_GPIO_setOutputLowOnPin(GPIO_PORT_P4, GPIO_PIN5);
+            }
+
+            if(resultsBuffer[1] < 4500) {
+                MAP_GPIO_setOutputHighOnPin(GPIO_PORT_P4, GPIO_PIN4);
+            }
+            else{
+                MAP_GPIO_setOutputLowOnPin(GPIO_PORT_P4, GPIO_PIN4);
+            }
+            if(resultsBuffer[2] < 5000) {
+                MAP_GPIO_setOutputHighOnPin(GPIO_PORT_P4, GPIO_PIN3);
+            }
+            else{
+                MAP_GPIO_setOutputLowOnPin(GPIO_PORT_P4, GPIO_PIN3);
+            }
+
+            if(resultsBuffer[3] < 6000) {
+                MAP_GPIO_setOutputHighOnPin(GPIO_PORT_P4, GPIO_PIN2);
+            }
+            else{
+                MAP_GPIO_setOutputLowOnPin(GPIO_PORT_P4, GPIO_PIN2);
+            }
+            if(resultsBuffer[4] < 7500) {
+                MAP_GPIO_setOutputHighOnPin(GPIO_PORT_P4, GPIO_PIN1);
+            }
+            else{
+                MAP_GPIO_setOutputLowOnPin(GPIO_PORT_P4, GPIO_PIN1);
+            }
+
+            if(resultsBuffer[5] < 7500) {
+                MAP_GPIO_setOutputHighOnPin(GPIO_PORT_P4, GPIO_PIN0);
+            }
+            else{
+                MAP_GPIO_setOutputLowOnPin(GPIO_PORT_P4, GPIO_PIN0);
+            }
+            if(resultsBuffer[6] < 6000) {
+                MAP_GPIO_setOutputHighOnPin(GPIO_PORT_P6, GPIO_PIN1);
+            }
+            else{
+                MAP_GPIO_setOutputLowOnPin(GPIO_PORT_P6, GPIO_PIN1);
+            }
+
+            if(resultsBuffer[7] < 3000) {
+                MAP_GPIO_setOutputHighOnPin(GPIO_PORT_P6, GPIO_PIN0);
+            }
+            else{
+                MAP_GPIO_setOutputLowOnPin(GPIO_PORT_P6, GPIO_PIN0);
+            }
+
 
             MAP_ADC14_toggleConversionTrigger();
         }
