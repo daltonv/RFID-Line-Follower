@@ -9,6 +9,7 @@
 #include <LineSensor.h>
 
 static uint16_t resultsBuffer[8];
+static uint16_t irBuffer[8];
 
 LineSensor::LineSensor() {
     /* Initializing ADC (MCLK/1/1) */
@@ -80,6 +81,7 @@ void LineSensor::irOff() {
     MAP_GPIO_setOutputLowOnPin(GPIO_PORT_P9, GPIO_PIN1);
 }
 
+
 /* this has to be placed around interrupt vectors for them to work in C++ files*/
 extern "C" {
     /* ADC Interrupt Handler. This handler is called whenever there is a conversion
@@ -97,55 +99,69 @@ extern "C" {
             int limit = 7000;
             if(resultsBuffer[0] < 3000) {
                 MAP_GPIO_setOutputHighOnPin(GPIO_PORT_P4, GPIO_PIN5);
+                irBuffer[0] = 1;
             }
             else{
                 MAP_GPIO_setOutputLowOnPin(GPIO_PORT_P4, GPIO_PIN5);
+                irBuffer[0] = 0;
             }
 
             if(resultsBuffer[1] < 4500) {
                 MAP_GPIO_setOutputHighOnPin(GPIO_PORT_P4, GPIO_PIN4);
+                irBuffer[1] = 1;
             }
             else{
                 MAP_GPIO_setOutputLowOnPin(GPIO_PORT_P4, GPIO_PIN4);
+                irBuffer[1] = 0;
             }
             if(resultsBuffer[2] < 5000) {
                 MAP_GPIO_setOutputHighOnPin(GPIO_PORT_P4, GPIO_PIN3);
+                irBuffer[2] = 1;
             }
             else{
                 MAP_GPIO_setOutputLowOnPin(GPIO_PORT_P4, GPIO_PIN3);
+                irBuffer[2] = 0;
             }
 
             if(resultsBuffer[3] < 6000) {
                 MAP_GPIO_setOutputHighOnPin(GPIO_PORT_P4, GPIO_PIN2);
+                irBuffer[3] = 1;
             }
             else{
                 MAP_GPIO_setOutputLowOnPin(GPIO_PORT_P4, GPIO_PIN2);
+                irBuffer[3] = 0;
             }
             if(resultsBuffer[4] < 7500) {
                 MAP_GPIO_setOutputHighOnPin(GPIO_PORT_P4, GPIO_PIN1);
+                irBuffer[4] = 1;
             }
             else{
                 MAP_GPIO_setOutputLowOnPin(GPIO_PORT_P4, GPIO_PIN1);
+                irBuffer[4] = 0;
             }
-
             if(resultsBuffer[5] < 7500) {
                 MAP_GPIO_setOutputHighOnPin(GPIO_PORT_P4, GPIO_PIN0);
+                irBuffer[5] = 1;
             }
             else{
                 MAP_GPIO_setOutputLowOnPin(GPIO_PORT_P4, GPIO_PIN0);
+                irBuffer[5] = 0;
             }
             if(resultsBuffer[6] < 6000) {
                 MAP_GPIO_setOutputHighOnPin(GPIO_PORT_P6, GPIO_PIN1);
+                irBuffer[6] = 1;
             }
             else{
                 MAP_GPIO_setOutputLowOnPin(GPIO_PORT_P6, GPIO_PIN1);
+                irBuffer[6] = 0;
             }
-
             if(resultsBuffer[7] < 3000) {
                 MAP_GPIO_setOutputHighOnPin(GPIO_PORT_P6, GPIO_PIN0);
+                irBuffer[7] = 1;
             }
             else{
                 MAP_GPIO_setOutputLowOnPin(GPIO_PORT_P6, GPIO_PIN0);
+                irBuffer[7] = 0;
             }
 
 
