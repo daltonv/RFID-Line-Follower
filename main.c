@@ -67,15 +67,29 @@
 
 void testPropCtrl();
 
-const int maxSpeed = 700;
+const int maxSpeed = 400;
 const float lineSpeedSlope = (float)maxSpeed/4.5;
+
+
 
 int main(void) {
     /* Stop Watchdog  */
     MAP_WDT_A_holdTimer();
 
+    MAP_FPU_enableModule();
+
+    MAP_FlashCtl_setWaitState(FLASH_BANK0,2);
+    MAP_FlashCtl_setWaitState(FLASH_BANK1,2);
+
+    MAP_PCM_setCoreVoltageLevel(PCM_VCORE1);
+
     /* Setting DCO to 24MHz */
     MAP_CS_setDCOCenteredFrequency(CS_DCO_FREQUENCY_24);
+
+    line_sensor_init();
+    motors_init();
+
+    irOn();
 
     while(1)
     {

@@ -6,7 +6,7 @@
  */
 
 
-#include <line_sensor.h>
+#include "line_sensor.h"
 
 static uint16_t resultsBuffer[8];
 static uint16_t irBuffer[8];
@@ -14,7 +14,7 @@ static uint16_t irBuffer[8];
 void line_sensor_init() {
     /* Initializing ADC (MCLK/1/1) */
     MAP_ADC14_enableModule();
-    MAP_ADC14_initModule(ADC_CLOCKSOURCE_MCLK, ADC_PREDIVIDER_1, ADC_DIVIDER_1,0);
+    MAP_ADC14_initModule(ADC_CLOCKSOURCE_MCLK, ADC_PREDIVIDER_1, ADC_DIVIDER_4,0);
 
     /* Configuring GPIOs for Analog In */
     MAP_GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P5,
@@ -81,12 +81,17 @@ void irOff() {
 
 float readLineAvg() {
     int lineSum = irBuffer[0] + irBuffer[1]*2 + irBuffer[2]*3 + irBuffer[3]*4 + irBuffer[4]*5 + irBuffer[5]*6 + irBuffer[6]*7 + irBuffer[7]*8;
-    float lineAvg = (float)lineSum/(irBuffer[0] + irBuffer[1] + irBuffer[2] + irBuffer[3] + irBuffer[4] + irBuffer[5] + irBuffer[6] + irBuffer[7]);
+    float lineAvg = 0;
+
+    if (lineSum != 0) {
+        lineAvg = (float)lineSum/(irBuffer[0] + irBuffer[1] + irBuffer[2] + irBuffer[3] + irBuffer[4] + irBuffer[5] + irBuffer[6] + irBuffer[7]);
+    }
+
     return lineAvg;
 }
 
 /* ADC Interrupt Handler. This handler is called whenever there is a conversion
- * that is finished for ADC_MEM0.
+ * that is finished for ADC_MEM7.
  */
 void ADC14_IRQHandler(void)
 {
