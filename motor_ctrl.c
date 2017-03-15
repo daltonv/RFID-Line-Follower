@@ -57,6 +57,17 @@ void straight(int speed) {
     setRightSpeed(speed);
 }
 
+void turnInPlace(int dir, int speed) {
+    if (dir == LEFT) {
+        setLeftSpeed(speed);
+        setRightSpeed(-1*speed);
+    }
+    else {
+        setLeftSpeed(-1*speed);
+        setRightSpeed(speed);
+    }
+}
+
 void setLeftSpeed(int speed) {
     if (speed > 0) {
         pwmConfigL_1.dutyCycle = 0;

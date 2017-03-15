@@ -15,11 +15,13 @@
 #define EDGE_LEFT 1
 #define EDGE_RIGHT 2
 #define EDGE_BOTH 3
+#define EDGE_STRAIGHT 4
 
 void line_sensor_init();
 
 void irOff();
 void irOn();
+int detectEdge();
 float readLineAvg();
 
 #endif /* LINE_SENSOR_H_ */

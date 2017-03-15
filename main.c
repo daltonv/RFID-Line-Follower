@@ -98,19 +98,36 @@ int main(void) {
 }
 
 void testPropCtrl() {
-    float line = readLineAvg();
-    int leftSpeed = line*lineSpeedSlope + .5;
-    int rightSpeed = (9-line)*lineSpeedSlope + .5;
+    int edge = detectEdge();
 
-    /* this should be in the motor control code */
-    if (rightSpeed > maxSpeed) {
-        rightSpeed = maxSpeed;
-    }
-    if (leftSpeed > maxSpeed) {
-        leftSpeed = maxSpeed;
-    }
+    if(edge = EDGE_NONE || edge == EDGE_STRAIGHT) {
+        float line = readLineAvg();
 
-    setLeftSpeed(leftSpeed);
-    setRightSpeed(rightSpeed);
+        int leftSpeed = line*lineSpeedSlope + .5;
+        int rightSpeed = (9-line)*lineSpeedSlope + .5;
+
+        /* this should be in the motor control code */
+        if (rightSpeed > maxSpeed) {
+            rightSpeed = maxSpeed;
+        }
+        if (leftSpeed > maxSpeed) {
+            leftSpeed = maxSpeed;
+        }
+
+        setLeftSpeed(leftSpeed);
+        setRightSpeed(rightSpeed);
+    }
+    else if(edge == EDGE_LEFT || edge == EDGE_BOTH) {
+        turnInPlace(LEFT, maxSpeed);
+        edge = detectEdge();
+
+        while(edge != EDGE_STRAIGHT) {
+            edge = detectEdge();
+        }
+
+    }
+    else if(edge == EDGE_RIGHT) {
+        straight(maxSpeed);
+    }
 }
 

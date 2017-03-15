@@ -11,9 +11,13 @@
 /* DriverLib Includes */
 #include <ti/devices/msp432p4xx/driverlib/driverlib.h>
 
+#define LEFT 0
+#define RIGHT 0
+
 void motors_init();
 
 void straight(int speed);
+void turnInPlace(int dir, int speed);
 void setLeftSpeed(int speed);
 void setRightSpeed(int speed);
 
