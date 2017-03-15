@@ -52,9 +52,9 @@
  *            |                  |
  * Author: 
 *******************************************************************************/
-#define __NOP __nop
 
 /* DriverLib Includes */
+
 #include <ti/devices/msp432p4xx/driverlib/driverlib.h>
 
 /* Standard Includes */
@@ -62,16 +62,13 @@
 #include <stdbool.h>
 #include <math.h>
 
-#include "LineSensor.h"
-#include "MotorControl.h"
+#include "line_sensor.h"
+#include "motor_ctrl.h"
 
 void testPropCtrl();
 
-int maxSpeed = 910;
+const int maxSpeed = 700;
 const float lineSpeedSlope = (float)maxSpeed/4.5;
-
-MotorControl motorTest;
-LineSensor lineTest;
 
 int main(void) {
     /* Stop Watchdog  */
@@ -80,8 +77,6 @@ int main(void) {
     /* Setting DCO to 24MHz */
     MAP_CS_setDCOCenteredFrequency(CS_DCO_FREQUENCY_24);
 
-    lineTest.irOn();
-
     while(1)
     {
         testPropCtrl();
@@ -89,7 +84,7 @@ int main(void) {
 }
 
 void testPropCtrl() {
-    float line = lineTest.readLineAvg();
+    float line = readLineAvg();
     int leftSpeed = floor(line*lineSpeedSlope + .5);
     int rightSpeed = floor((9-line)*lineSpeedSlope + .5);
 
@@ -101,7 +96,7 @@ void testPropCtrl() {
         leftSpeed = maxSpeed;
     }
 
-    motorTest.setLeftSpeed(leftSpeed);
-    motorTest.setRightSpeed(rightSpeed);
+    setLeftSpeed(leftSpeed);
+    setRightSpeed(rightSpeed);
 }
 
