@@ -67,7 +67,7 @@
 
 void testPropCtrl();
 
-const int maxSpeed = 400;
+const int maxSpeed = 200;
 const float lineSpeedSlope = (float)maxSpeed/4.5;
 
 
@@ -86,8 +86,8 @@ int main(void) {
     /* Setting DCO to 24MHz */
     MAP_CS_setDCOCenteredFrequency(CS_DCO_FREQUENCY_24);
 
-    line_sensor_init();
     motors_init();
+    line_sensor_init();
 
     irOn();
 
@@ -99,8 +99,8 @@ int main(void) {
 
 void testPropCtrl() {
     float line = readLineAvg();
-    int leftSpeed = floor(line*lineSpeedSlope + .5);
-    int rightSpeed = floor((9-line)*lineSpeedSlope + .5);
+    int leftSpeed = line*lineSpeedSlope + .5;
+    int rightSpeed = (9-line)*lineSpeedSlope + .5;
 
     /* this should be in the motor control code */
     if (rightSpeed > maxSpeed) {
