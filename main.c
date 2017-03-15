@@ -67,7 +67,7 @@
 
 void testPropCtrl();
 
-const int maxSpeed = 200;
+const int maxSpeed = 400;
 const float lineSpeedSlope = (float)maxSpeed/4.5;
 
 

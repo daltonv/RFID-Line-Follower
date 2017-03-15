@@ -90,6 +90,21 @@ float readLineAvg() {
     return lineAvg;
 }
 
+int detectEdge() {
+    if(irBuffer[0] == 1 && irBuffer[1] == 1 && irBuffer[2] == 1 && irBuffer[3] == 1 && irBuffer[4] == 1 && irBuffer[5] == 0 && irBuffer[6] == 0 && irBuffer[7] == 0) {
+        return EDGE_LEFT;
+    }
+    else if(irBuffer[0] == 0 && irBuffer[1] == 0 && irBuffer[2] == 0 && irBuffer[3] == 1 && irBuffer[4] == 1 && irBuffer[5] == 1 && irBuffer[6] == 1 && irBuffer[7] == 1) {
+        return EDGE_RIGHT;
+    }
+    else if(irBuffer[0] == 1 && irBuffer[1] == 1 && irBuffer[2] == 1 && irBuffer[3] == 1 && irBuffer[4] == 1 && irBuffer[5] == 1 && irBuffer[6] == 1 && irBuffer[7] == 1) {
+        return EDGE_BOTH;
+    }
+    else {
+        return EDGE_NONE;
+    }
+}
+
 /* ADC Interrupt Handler. This handler is called whenever there is a conversion
  * that is finished for ADC_MEM7.
  */

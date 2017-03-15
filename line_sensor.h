@@ -11,6 +11,11 @@
 /* DriverLib Includes */
 #include <ti/devices/msp432p4xx/driverlib/driverlib.h>
 
+#define EDGE_NONE 0
+#define EDGE_LEFT 1
+#define EDGE_RIGHT 2
+#define EDGE_BOTH 3
+
 void line_sensor_init();
 
 void irOff();
