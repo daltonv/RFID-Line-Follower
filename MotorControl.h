@@ -23,6 +23,8 @@ public:
     Motor rightMotor;
 
     void straight(int speed);
+    void setLeftSpeed(int speed);
+    void setRightSpeed(int speed);
     void turnLeftHard(int speed);
     void turnRightHard(int speed);
     void stop();

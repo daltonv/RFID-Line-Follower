@@ -81,6 +81,12 @@ void LineSensor::irOff() {
     MAP_GPIO_setOutputLowOnPin(GPIO_PORT_P9, GPIO_PIN1);
 }
 
+float LineSensor::readLineAvg() {
+    int lineSum = irBuffer[0] + irBuffer[1]*2 + irBuffer[2]*3 + irBuffer[3]*4 + irBuffer[4]*5 + irBuffer[5]*6 + irBuffer[6]*7 + irBuffer[7]*8;
+    float lineAvg = (float)lineSum/(irBuffer[0] + irBuffer[1] + irBuffer[2] + irBuffer[3] + irBuffer[4] + irBuffer[5] + irBuffer[6] + irBuffer[7]);
+    return lineAvg;
+}
+
 
 /* this has to be placed around interrupt vectors for them to work in C++ files*/
 extern "C" {
@@ -96,7 +102,6 @@ extern "C" {
         {
             MAP_ADC14_getMultiSequenceResult(resultsBuffer);
 
-            int limit = 7000;
             if(resultsBuffer[0] < 3000) {
                 MAP_GPIO_setOutputHighOnPin(GPIO_PORT_P4, GPIO_PIN5);
                 irBuffer[0] = 1;
@@ -165,7 +170,7 @@ extern "C" {
             }
 
 
-            MAP_ADC14_toggleConversionTrigger();
+            //MAP_ADC14_toggleConversionTrigger();
         }
     }
 }

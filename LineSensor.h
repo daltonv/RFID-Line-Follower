@@ -20,6 +20,7 @@ public:
 
     void irOff();
     void irOn();
+    float readLineAvg();
 };
 
 #endif /* LINESENSOR_H_ */

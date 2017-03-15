@@ -60,27 +60,48 @@
 /* Standard Includes */
 #include <stdint.h>
 #include <stdbool.h>
+#include <math.h>
 
 #include "LineSensor.h"
 #include "MotorControl.h"
 
-int main(void)
+void testPropCtrl();
 
+int maxSpeed = 910;
+const float lineSpeedSlope = (float)maxSpeed/4.5;
 
-{
+MotorControl motorTest;
+LineSensor lineTest;
+
+int main(void) {
     /* Stop Watchdog  */
     MAP_WDT_A_holdTimer();
 
     /* Setting DCO to 24MHz */
     MAP_CS_setDCOCenteredFrequency(CS_DCO_FREQUENCY_24);
 
-    MotorControl motorTest;
-    LineSensor lineTest;
-    motorTest.straight(0);
+    lineTest.irOn();
 
     while(1)
     {
-        MAP_PCM_gotoLPM0();
+        testPropCtrl();
     }
+}
+
+void testPropCtrl() {
+    float line = lineTest.readLineAvg();
+    int leftSpeed = floor(line*lineSpeedSlope + .5);
+    int rightSpeed = floor((9-line)*lineSpeedSlope + .5);
+
+    /* this should be in the motor control code */
+    if (rightSpeed > maxSpeed) {
+        rightSpeed = maxSpeed;
+    }
+    if (leftSpeed > maxSpeed) {
+        leftSpeed = maxSpeed;
+    }
+
+    motorTest.setLeftSpeed(leftSpeed);
+    motorTest.setRightSpeed(rightSpeed);
 }
 

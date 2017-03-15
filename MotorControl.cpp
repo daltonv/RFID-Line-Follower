@@ -23,6 +23,14 @@ void MotorControl::straight(int speed) {
     this->rightMotor.setSpeed(speed);
 }
 
+void MotorControl::setRightSpeed(int speed) {
+    this->rightMotor.setSpeed(speed);
+}
+
+void MotorControl::setLeftSpeed(int speed) {
+    this->leftMotor.setSpeed(speed);
+}
+
 void MotorControl::turnLeftHard(int speed) {
     this->leftMotor.setSpeed(speed);
     this->rightMotor.setSpeed(0);
