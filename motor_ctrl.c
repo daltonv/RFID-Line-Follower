@@ -53,28 +53,27 @@ void motors_init() {
 }
 
 void straight(int speed) {
-    setLeftSpeed(speed);
-    setRightSpeed(speed);
+    setLeftSpeed(1,speed);
+    setRightSpeed(1,speed);
 }
 
 void turnInPlace(int dir, int speed) {
     if (dir == LEFT) {
-        setLeftSpeed(speed);
-        setRightSpeed(-1*speed);
+        setLeftSpeed(1,speed);
+        setRightSpeed(0,speed);
     }
     else {
-        setLeftSpeed(-1*speed);
-        setRightSpeed(speed);
+        setLeftSpeed(1,speed);
+        setRightSpeed(0,speed);
     }
 }
 
-void setLeftSpeed(int speed) {
-    if (speed > 0) {
+void setLeftSpeed(int dir ,int speed) {
+    if (dir == 1) {
         pwmConfigL_1.dutyCycle = 0;
         pwmConfigL_2.dutyCycle = speed;
     }
     else {
-        speed = speed * -1;
         pwmConfigL_1.dutyCycle = speed;
         pwmConfigL_2.dutyCycle = 0;
     }
@@ -84,13 +83,12 @@ void setLeftSpeed(int speed) {
     MAP_Timer_A_generatePWM(TIMER_A0_BASE, &pwmConfigL_2);
 }
 
-void setRightSpeed(int speed) {
-    if (speed > 0) {
+void setRightSpeed(int dir, int speed) {
+    if (dir == 1) {
         pwmConfigR_1.dutyCycle = 0;
         pwmConfigR_2.dutyCycle = speed;
     }
     else {
-        speed = speed * -1;
         pwmConfigR_1.dutyCycle = speed;
         pwmConfigR_2.dutyCycle = 0;
     }

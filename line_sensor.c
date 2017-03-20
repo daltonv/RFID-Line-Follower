@@ -14,7 +14,7 @@ static uint16_t irBuffer[8];
 void line_sensor_init() {
     /* Initializing ADC (MCLK/1/1) */
     MAP_ADC14_enableModule();
-    MAP_ADC14_initModule(ADC_CLOCKSOURCE_MCLK, ADC_PREDIVIDER_1, ADC_DIVIDER_4,0);
+    MAP_ADC14_initModule(ADC_CLOCKSOURCE_SMCLK, ADC_PREDIVIDER_1, ADC_DIVIDER_4,0);
 
     /* Configuring GPIOs for Analog In */
     MAP_GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P5,

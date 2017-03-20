@@ -60,15 +60,16 @@
 /* Standard Includes */
 #include <stdint.h>
 #include <stdbool.h>
-#include <math.h>
+
 
 #include "line_sensor.h"
-#include "motor_ctrl.h"
+#include "motor_ctrl2.h"
 
 void testPropCtrl();
+void testPropCtrl2();
 
-const int maxSpeed = 400;
-const float lineSpeedSlope = (float)maxSpeed/4.5;
+int maxSpeed = 400;
+const float lineSpeedSlope = 400/4.5;
 
 
 
@@ -86,21 +87,21 @@ int main(void) {
     /* Setting DCO to 24MHz */
     MAP_CS_setDCOCenteredFrequency(CS_DCO_FREQUENCY_24);
 
-    motors_init();
+    Nmotors_init();
     line_sensor_init();
 
     irOn();
 
     while(1)
     {
-        testPropCtrl();
+        testPropCtrl2();
     }
 }
 
-void testPropCtrl() {
+void testPropCtrl2() {
     int edge = detectEdge();
 
-    if(edge = EDGE_NONE || edge == EDGE_STRAIGHT) {
+    if(edge == EDGE_NONE || edge == EDGE_STRAIGHT) {
         float line = readLineAvg();
 
         int leftSpeed = line*lineSpeedSlope + .5;
@@ -114,20 +115,40 @@ void testPropCtrl() {
             leftSpeed = maxSpeed;
         }
 
-        setLeftSpeed(leftSpeed);
-        setRightSpeed(rightSpeed);
+        NsetLeftSpeed(1,leftSpeed);
+        NsetRightSpeed(1,rightSpeed);
     }
     else if(edge == EDGE_LEFT || edge == EDGE_BOTH) {
-        turnInPlace(LEFT, maxSpeed);
+        NturnInPlace(0, maxSpeed);
         edge = detectEdge();
 
         while(edge != EDGE_STRAIGHT) {
             edge = detectEdge();
         }
 
+        Nstraight(maxSpeed);
+
     }
     else if(edge == EDGE_RIGHT) {
-        straight(maxSpeed);
+        Nstraight(maxSpeed);
     }
+}
+
+void testPropCtrl() {
+    float line = readLineAvg();
+
+    int leftSpeed = line*lineSpeedSlope + .5;
+    int rightSpeed = (9-line)*lineSpeedSlope + .5;
+
+    /* this should be in the motor control code */
+    if (rightSpeed > maxSpeed) {
+        rightSpeed = maxSpeed;
+    }
+    if (leftSpeed > maxSpeed) {
+        leftSpeed = maxSpeed;
+    }
+
+    setLeftSpeed(1,leftSpeed);
+    setRightSpeed(1,rightSpeed);
 }
 

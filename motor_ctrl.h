@@ -18,8 +18,8 @@ void motors_init();
 
 void straight(int speed);
 void turnInPlace(int dir, int speed);
-void setLeftSpeed(int speed);
-void setRightSpeed(int speed);
+void setLeftSpeed(int dir, int speed);
+void setRightSpeed(int dir, int speed);
 
 
 #endif /* MOTOR_CTRL_H_ */
