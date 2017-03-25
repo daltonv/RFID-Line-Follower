@@ -12,7 +12,7 @@
 #include <ti/devices/msp432p4xx/driverlib/driverlib.h>
 
 #define LEFT 0
-#define RIGHT 0
+#define RIGHT 1
 #define TIMER_PERIOD 2000
 
 void motors_init();

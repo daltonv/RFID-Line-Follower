@@ -67,8 +67,8 @@ void turnInPlace(int dir, int speed) {
         setRightSpeed(0,speed);
     }
     else {
-        setLeftSpeed(1,speed);
-        setRightSpeed(0,speed);
+        setLeftSpeed(0,speed);
+        setRightSpeed(1,speed);
     }
 }
 

@@ -68,7 +68,7 @@
 void testPropCtrl();
 void testPropCtrl2();
 
-const int maxSpeed = 500;
+const int maxSpeed = 1000;
 const float lineSpeedSlope = maxSpeed/4.5;
 
 int main(void) {
@@ -121,7 +121,7 @@ void testPropCtrl2() {
         turnInPlace(1, maxSpeed);
         edge = detectEdge();
 
-        while(edge != EDGE_STRAIGHT) {
+        while(edge == EDGE_LEFT || edge == EDGE_BOTH) {
             edge = detectEdge();
         }
 
