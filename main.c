@@ -71,6 +71,8 @@ void testPropCtrl2();
 const int maxSpeed = 1000;
 const float lineSpeedSlope = maxSpeed/4.5;
 
+int directions[5] = {FORWARD, LEFT, LEFT, LEFT, RIGHT};
+
 int main(void) {
     /* Stop Watchdog  */
     MAP_WDT_A_holdTimer();
@@ -94,6 +96,34 @@ int main(void) {
     {
         testPropCtrl2();
         //straight(1500);
+    }
+}
+
+void testDirections() {
+    int i = 0;
+    int edge = 0;
+    while(i != 5) {
+        edge = detectEdge();
+
+        if(edge == EDGE_NONE || edge == EDGE_STRAIGHT) {
+            testPropCtrl();
+        }
+        else {
+            straight(0);
+
+            if(directions[i] == LEFT || directions[i] == RIGHT) {
+                turn(directions[i], maxSpeed);
+                edge = detectEdge();
+
+                while(edge != EDGE_STRAIGHT) {
+                    edge = detectEdge();
+                }
+
+                straight(maxSpeed);
+            }
+
+            i++;
+        }
     }
 }
 

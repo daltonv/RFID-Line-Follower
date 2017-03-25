@@ -13,6 +13,7 @@
 
 #define LEFT 0
 #define RIGHT 1
+#define FORWARD 3
 #define TIMER_PERIOD 2000
 
 void motors_init();
