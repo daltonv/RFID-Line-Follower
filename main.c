@@ -63,31 +63,29 @@
 
 
 #include "line_sensor.h"
-#include "motor_ctrl2.h"
+#include "motor_ctrl.h"
 
 void testPropCtrl();
 void testPropCtrl2();
 
-int maxSpeed = 400;
-const float lineSpeedSlope = 400/4.5;
-
-
+const int maxSpeed = 500;
+const float lineSpeedSlope = maxSpeed/4.5;
 
 int main(void) {
     /* Stop Watchdog  */
     MAP_WDT_A_holdTimer();
+
+    /* Setting DCO to 24MHz */
+    MAP_CS_setDCOCenteredFrequency(CS_DCO_FREQUENCY_24);
+
+    MAP_PCM_setCoreVoltageLevel(PCM_VCORE1);
 
     MAP_FPU_enableModule();
 
     MAP_FlashCtl_setWaitState(FLASH_BANK0,2);
     MAP_FlashCtl_setWaitState(FLASH_BANK1,2);
 
-    MAP_PCM_setCoreVoltageLevel(PCM_VCORE1);
-
-    /* Setting DCO to 24MHz */
-    MAP_CS_setDCOCenteredFrequency(CS_DCO_FREQUENCY_24);
-
-    Nmotors_init();
+    motors_init();
     line_sensor_init();
 
     irOn();
@@ -95,6 +93,7 @@ int main(void) {
     while(1)
     {
         testPropCtrl2();
+        //straight(1500);
     }
 }
 
@@ -115,22 +114,22 @@ void testPropCtrl2() {
             leftSpeed = maxSpeed;
         }
 
-        NsetLeftSpeed(1,leftSpeed);
-        NsetRightSpeed(1,rightSpeed);
+        setLeftSpeed(1,leftSpeed);
+        setRightSpeed(1,rightSpeed);
     }
     else if(edge == EDGE_LEFT || edge == EDGE_BOTH) {
-        NturnInPlace(0, maxSpeed);
+        turnInPlace(1, maxSpeed);
         edge = detectEdge();
 
         while(edge != EDGE_STRAIGHT) {
             edge = detectEdge();
         }
 
-        Nstraight(maxSpeed);
+        straight(maxSpeed);
 
     }
     else if(edge == EDGE_RIGHT) {
-        Nstraight(maxSpeed);
+        straight(maxSpeed);
     }
 }
 
