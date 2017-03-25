@@ -72,6 +72,17 @@ void turnInPlace(int dir, int speed) {
     }
 }
 
+void turn(int dir, int speed) {
+    if (dir == LEFT) {
+        setLeftSpeed(1,speed);
+        setRightSpeed(1,0);
+    }
+    else {
+        setLeftSpeed(1,0);
+        setRightSpeed(1,speed);
+    }
+}
+
 void setLeftSpeed(int dir ,int speed) {
     if (dir == 1) {
         TA0CCR1 = 0;

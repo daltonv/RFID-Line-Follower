@@ -19,6 +19,7 @@ void motors_init();
 
 void straight(int speed);
 void turnInPlace(int dir, int speed);
+void turn(int dir, int speed);
 void setLeftSpeed(int dir, int speed);
 void setRightSpeed(int dir, int speed);
 

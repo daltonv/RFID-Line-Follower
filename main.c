@@ -118,10 +118,10 @@ void testPropCtrl2() {
         setRightSpeed(1,rightSpeed);
     }
     else if(edge == EDGE_LEFT || edge == EDGE_BOTH) {
-        turnInPlace(1, maxSpeed);
+        turn(LEFT, maxSpeed);
         edge = detectEdge();
 
-        while(edge == EDGE_LEFT || edge == EDGE_BOTH) {
+        while(edge != EDGE_STRAIGHT) {
             edge = detectEdge();
         }
 
