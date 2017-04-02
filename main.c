@@ -64,14 +64,17 @@
 
 #include "line_sensor.h"
 #include "motor_ctrl.h"
+#include "rfid.h"
 
 void testPropCtrl();
 void testPropCtrl2();
+void testDirections();
 
 const int maxSpeed = 1000;
 const float lineSpeedSlope = maxSpeed/4.5;
 
-int directions[5] = {FORWARD, LEFT, LEFT, LEFT, RIGHT};
+int directions[6] = {FORWARD, LEFT, LEFT, LEFT, LEFT,RIGHT};
+
 
 int main(void) {
     /* Stop Watchdog  */
@@ -89,41 +92,73 @@ int main(void) {
 
     motors_init();
     line_sensor_init();
+    rfid_init();
 
     irOn();
 
     while(1)
     {
-        testPropCtrl2();
-        //straight(1500);
+        testDirections();
+        //int x = getID();
+        //straight(0);
     }
 }
 
 void testDirections() {
     int i = 0;
     int edge = 0;
-    while(i != 5) {
+    while(i != 6) {
         edge = detectEdge();
 
         if(edge == EDGE_NONE || edge == EDGE_STRAIGHT) {
             testPropCtrl();
         }
         else {
-            straight(0);
+            straight(maxSpeed);
 
             if(directions[i] == LEFT || directions[i] == RIGHT) {
+                straight(0);
                 turn(directions[i], maxSpeed);
-                edge = detectEdge();
-
-                while(edge != EDGE_STRAIGHT) {
-                    edge = detectEdge();
-                }
-
-                straight(maxSpeed);
             }
+
+            edge = detectEdge();
+            while(edge != EDGE_STRAIGHT) {
+                edge = detectEdge();
+                if(directions[i] == FORWARD) {
+                    testPropCtrl();
+                }
+            }
+
+            straight(maxSpeed);
 
             i++;
         }
+    }
+
+    while(1) {
+        float line = readLineAvg();
+
+        if (line == 0) {
+            break;
+        }
+
+        int leftSpeed = line*lineSpeedSlope + .5;
+        int rightSpeed = (9-line)*lineSpeedSlope + .5;
+
+        /* this should be in the motor control code */
+        if (rightSpeed > maxSpeed) {
+           rightSpeed = maxSpeed;
+        }
+        if (leftSpeed > maxSpeed) {
+           leftSpeed = maxSpeed;
+        }
+
+        setLeftSpeed(1,leftSpeed);
+        setRightSpeed(1,rightSpeed);
+    }
+
+    while(1) {
+        straight(0);
     }
 }
 
