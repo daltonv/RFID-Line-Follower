@@ -16,6 +16,7 @@
 #define EDGE_RIGHT 2
 #define EDGE_BOTH 3
 #define EDGE_STRAIGHT 4
+#define NO_LINE 5
 
 void line_sensor_init();
 

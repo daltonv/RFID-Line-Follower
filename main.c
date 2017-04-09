@@ -66,15 +66,20 @@
 #include "motor_ctrl.h"
 #include "rfid.h"
 
-void testPropCtrl();
-void testPropCtrl2();
-void testDirections();
+void propCtrl();
+void followDirections();
+
+int paths[4][9] = {
+                   {FORWARD,RIGHT,FINDEND,0,0,0,0,0,0},
+                   {FORWARD,FORWARD,LEFT,STOP,0,0,0,0,0},
+                   {LEFT,RIGHT,RIGHT,FORWARD,FINDEND,0,0,0,0},
+                   {FORWARD,FORWARD,LEFT,LEFT,LEFT,STOP,0,0,0}
+};
 
 const int maxSpeed = 1000;
 const float lineSpeedSlope = maxSpeed/4.5;
 
-int directions[6] = {FORWARD, LEFT, LEFT, LEFT, LEFT,RIGHT};
-
+int face = FORWARD;
 
 int main(void) {
     /* Stop Watchdog  */
@@ -96,36 +101,62 @@ int main(void) {
 
     irOn();
 
-    while(1)
+    //start with no speed
+    straight(0);
+
+    //get shortest distance ready for all vertexes
+    //dijikstra(0);
+
+    while(1==1)
     {
-        testDirections();
-        //int x = getID();
-        //straight(0);
+        int ID = 0;
+        int pathChoice = -1;
+
+        ID = getID();
+
+        if(ID == 363562675) {
+            pathChoice = 0;
+            followDirections(pathChoice);
+        }
+        else if (ID == 363561852) {
+            pathChoice = 1;
+            followDirections(pathChoice);
+        }
+        else if (ID == 24256125) {
+            pathChoice = 2;
+            followDirections(pathChoice);
+        }
+        else if (ID == 6054415) {
+            pathChoice = 3;
+            followDirections(pathChoice);
+        }
+
     }
 }
 
-void testDirections() {
+void followDirections(int col) {
     int i = 0;
     int edge = 0;
-    while(i != 6) {
+
+    while(paths[col][i] != STOP && paths[col][i] != FINDEND) {
         edge = detectEdge();
 
-        if(edge == EDGE_NONE || edge == EDGE_STRAIGHT) {
-            testPropCtrl();
+        if(edge == EDGE_NONE || edge == EDGE_STRAIGHT || edge == NO_LINE) {
+            propCtrl();
         }
         else {
             straight(maxSpeed);
 
-            if(directions[i] == LEFT || directions[i] == RIGHT) {
+            if(paths[col][i] == LEFT || paths[col][i] == RIGHT) {
                 straight(0);
-                turn(directions[i], maxSpeed);
+                turn(paths[col][i],maxSpeed);
             }
 
             edge = detectEdge();
             while(edge != EDGE_STRAIGHT) {
                 edge = detectEdge();
-                if(directions[i] == FORWARD) {
-                    testPropCtrl();
+                if(paths[col][i] == FORWARD) {
+                    propCtrl();
                 }
             }
 
@@ -135,70 +166,32 @@ void testDirections() {
         }
     }
 
-    while(1) {
-        float line = readLineAvg();
-
-        if (line == 0) {
-            break;
-        }
-
-        int leftSpeed = line*lineSpeedSlope + .5;
-        int rightSpeed = (9-line)*lineSpeedSlope + .5;
-
-        /* this should be in the motor control code */
-        if (rightSpeed > maxSpeed) {
-           rightSpeed = maxSpeed;
-        }
-        if (leftSpeed > maxSpeed) {
-           leftSpeed = maxSpeed;
-        }
-
-        setLeftSpeed(1,leftSpeed);
-        setRightSpeed(1,rightSpeed);
-    }
-
-    while(1) {
-        straight(0);
-    }
-}
-
-void testPropCtrl2() {
-    int edge = detectEdge();
-
-    if(edge == EDGE_NONE || edge == EDGE_STRAIGHT) {
-        float line = readLineAvg();
-
-        int leftSpeed = line*lineSpeedSlope + .5;
-        int rightSpeed = (9-line)*lineSpeedSlope + .5;
-
-        /* this should be in the motor control code */
-        if (rightSpeed > maxSpeed) {
-            rightSpeed = maxSpeed;
-        }
-        if (leftSpeed > maxSpeed) {
-            leftSpeed = maxSpeed;
-        }
-
-        setLeftSpeed(1,leftSpeed);
-        setRightSpeed(1,rightSpeed);
-    }
-    else if(edge == EDGE_LEFT || edge == EDGE_BOTH) {
-        turn(LEFT, maxSpeed);
-        edge = detectEdge();
-
-        while(edge != EDGE_STRAIGHT) {
+    if(paths[col][i] == FINDEND) {
+        while(edge != NO_LINE) {
+            propCtrl();
             edge = detectEdge();
         }
 
-        straight(maxSpeed);
-
+        while(edge != EDGE_STRAIGHT) {
+            turnInPlace(LEFT, 500);
+            edge = detectEdge();
+        }
     }
-    else if(edge == EDGE_RIGHT) {
-        straight(maxSpeed);
+    else{
+        while(edge == EDGE_NONE || edge == EDGE_STRAIGHT || edge == NO_LINE) {
+            propCtrl();
+            edge = detectEdge();
+        }
+    }
+
+    //stop
+    straight(0);
+
+    while(1==1) {
     }
 }
 
-void testPropCtrl() {
+void propCtrl() {
     float line = readLineAvg();
 
     int leftSpeed = line*lineSpeedSlope + .5;

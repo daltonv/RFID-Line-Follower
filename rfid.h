@@ -10,6 +10,9 @@
 
 /* DriverLib Includes */
 #include <ti/devices/msp432p4xx/driverlib/driverlib.h>
+#include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 void rfid_init();
 int getID();

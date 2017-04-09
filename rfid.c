@@ -7,8 +7,7 @@
 
 
 #include "rfid.h"
-#include <stdio.h>
-#include <stdlib.h>
+
 
 /* UART config for baud rate of 9600 */
 const eUSCI_UART_Config uartConfig =
@@ -23,6 +22,8 @@ const eUSCI_UART_Config uartConfig =
     EUSCI_A_UART_MODE,                       // UART mode
     EUSCI_A_UART_OVERSAMPLING_BAUDRATE_GENERATION  // Oversampling
 };
+
+int testID = 0;
 
 void rfid_init() {
     /* Selecting P1.2 and P1.3 in UART mode */
@@ -39,14 +40,23 @@ void rfid_init() {
     //MAP_Interrupt_enableInterrupt(INT_EUSCIA0);
 }
 
+
+/* Valid Tags :
+ * 363562675
+ * 363561852
+ * 24256125
+ * 6054415
+ */
 int getID() {
     uint8_t digits[12];
     memset(digits, 0x00, 12);
 
+    uint8_t rxdByte;
+
     int i;
     for(i=0; i<11; i++) {
         while(UCRXIFG == 0) {}
-        uint8_t rxdByte = MAP_UART_receiveData(EUSCI_A0_BASE);
+        rxdByte = MAP_UART_receiveData(EUSCI_A0_BASE);
         if(rxdByte == '\x0d') {
             break;
         }

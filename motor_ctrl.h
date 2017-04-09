@@ -14,6 +14,9 @@
 #define LEFT 0
 #define RIGHT 1
 #define FORWARD 3
+#define BACKWARD 4
+#define STOP 5
+#define FINDEND 6
 #define TIMER_PERIOD 2000
 
 void motors_init();
