@@ -10,11 +10,12 @@
 
 static uint16_t resultsBuffer[8];
 static uint16_t irBuffer[8];
+static uint16_t edge;
 
 void line_sensor_init() {
     /* Initializing ADC (MCLK/1/1) */
     MAP_ADC14_enableModule();
-    MAP_ADC14_initModule(ADC_CLOCKSOURCE_MCLK, ADC_PREDIVIDER_1, ADC_DIVIDER_4,0);
+    MAP_ADC14_initModule(ADC_CLOCKSOURCE_SMCLK, ADC_PREDIVIDER_1, ADC_DIVIDER_4,0);
 
     /* Configuring GPIOs for Analog In */
     MAP_GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P5,
@@ -67,7 +68,6 @@ void line_sensor_init() {
     /* Enabling interrupts */
     MAP_ADC14_enableInterrupt(ADC_INT7);
     MAP_Interrupt_enableInterrupt(INT_ADC14);
-    MAP_Interrupt_enableMaster();
 }
 
 
@@ -90,25 +90,31 @@ float readLineAvg() {
     return lineAvg;
 }
 
-int detectEdge() {
-    if(irBuffer[0] == 1 && irBuffer[1] == 1 && irBuffer[2] == 1 && ((irBuffer[3] == 1 && irBuffer[4] == 1) || (irBuffer[3] == 1 && irBuffer[4] == 0)) && irBuffer[5] == 0 && irBuffer[6] == 0 && irBuffer[7] == 0) {
-        return EDGE_LEFT;
+void detectEdge() {
+    if(irBuffer[0] == 1 && irBuffer[1] == 1 && irBuffer[2] == 1 && irBuffer[6] == 0 && irBuffer[7] == 0) {
+        edge = EDGE_LEFT;
     }
-    else if(irBuffer[0] == 0 && irBuffer[1] == 0 && irBuffer[2] == 0 && ((irBuffer[3] == 1 && irBuffer[4] == 1) || (irBuffer[3] == 0 && irBuffer[4] == 1)) && irBuffer[5] == 1 && irBuffer[6] == 1 && irBuffer[7] == 1) {
-        return EDGE_RIGHT;
+    else if(irBuffer[0] == 0 && irBuffer[1] == 0 && irBuffer[5] == 1 && irBuffer[6] == 1 && irBuffer[7] == 1) {
+        edge = EDGE_RIGHT;
     }
     else if(irBuffer[0] == 1 && irBuffer[1] == 1 && irBuffer[2] == 1 && irBuffer[3] == 1 && irBuffer[4] == 1 && irBuffer[5] == 1 && irBuffer[6] == 1 && irBuffer[7] == 1) {
-        return EDGE_BOTH;
+        edge = EDGE_BOTH;
     }
     else if(irBuffer[0] == 0 && irBuffer[1] == 0 && irBuffer[2] == 0 && (irBuffer[3] == 1 || irBuffer[4] == 1) && irBuffer[5] == 0 && irBuffer[6] == 0 && irBuffer[7] == 0) {
-        return EDGE_STRAIGHT;
+        edge = EDGE_STRAIGHT;
     }
     else if(irBuffer[0] == 0 && irBuffer[1] == 0 && irBuffer[2] == 0 && irBuffer[3] == 0 && irBuffer[4] == 0 && irBuffer[5] == 0 && irBuffer[6] == 0 && irBuffer[7] == 0) {
-        return NO_LINE;
+        edge = NO_LINE;
     }
     else {
-        return EDGE_NONE;
+        edge = EDGE_NONE;
     }
+
+    return;
+}
+
+int getEdge() {
+    return edge;
 }
 
 /* ADC Interrupt Handler. This handler is called whenever there is a conversion
@@ -123,7 +129,7 @@ void ADC14_IRQHandler(void)
     {
         MAP_ADC14_getMultiSequenceResult(resultsBuffer);
 
-        if(resultsBuffer[0] < 3000) {
+        if(resultsBuffer[0] < 2500) {
             MAP_GPIO_setOutputHighOnPin(GPIO_PORT_P4, GPIO_PIN5);
             irBuffer[0] = 1;
         }
@@ -132,7 +138,7 @@ void ADC14_IRQHandler(void)
             irBuffer[0] = 0;
         }
 
-        if(resultsBuffer[1] < 4500) {
+        if(resultsBuffer[1] < 4050) {
             MAP_GPIO_setOutputHighOnPin(GPIO_PORT_P4, GPIO_PIN4);
             irBuffer[1] = 1;
         }
@@ -140,7 +146,7 @@ void ADC14_IRQHandler(void)
             MAP_GPIO_setOutputLowOnPin(GPIO_PORT_P4, GPIO_PIN4);
             irBuffer[1] = 0;
         }
-        if(resultsBuffer[2] < 5000) {
+        if(resultsBuffer[2] < 3300) {
             MAP_GPIO_setOutputHighOnPin(GPIO_PORT_P4, GPIO_PIN3);
             irBuffer[2] = 1;
         }
@@ -157,7 +163,7 @@ void ADC14_IRQHandler(void)
             MAP_GPIO_setOutputLowOnPin(GPIO_PORT_P4, GPIO_PIN2);
             irBuffer[3] = 0;
         }
-        if(resultsBuffer[4] < 7500) {
+        if(resultsBuffer[4] < 8000) {
             MAP_GPIO_setOutputHighOnPin(GPIO_PORT_P4, GPIO_PIN1);
             irBuffer[4] = 1;
         }
@@ -165,7 +171,7 @@ void ADC14_IRQHandler(void)
             MAP_GPIO_setOutputLowOnPin(GPIO_PORT_P4, GPIO_PIN1);
             irBuffer[4] = 0;
         }
-        if(resultsBuffer[5] < 7500) {
+        if(resultsBuffer[5] < 8500) {
             MAP_GPIO_setOutputHighOnPin(GPIO_PORT_P4, GPIO_PIN0);
             irBuffer[5] = 1;
         }
@@ -173,7 +179,7 @@ void ADC14_IRQHandler(void)
             MAP_GPIO_setOutputLowOnPin(GPIO_PORT_P4, GPIO_PIN0);
             irBuffer[5] = 0;
         }
-        if(resultsBuffer[6] < 6000) {
+        if(resultsBuffer[6] < 8000) {
             MAP_GPIO_setOutputHighOnPin(GPIO_PORT_P6, GPIO_PIN1);
             irBuffer[6] = 1;
         }
@@ -181,7 +187,7 @@ void ADC14_IRQHandler(void)
             MAP_GPIO_setOutputLowOnPin(GPIO_PORT_P6, GPIO_PIN1);
             irBuffer[6] = 0;
         }
-        if(resultsBuffer[7] < 3000) {
+        if(resultsBuffer[7] < 4000) {
             MAP_GPIO_setOutputHighOnPin(GPIO_PORT_P6, GPIO_PIN0);
             irBuffer[7] = 1;
         }
@@ -190,6 +196,7 @@ void ADC14_IRQHandler(void)
             irBuffer[7] = 0;
         }
 
+        detectEdge();
 
 
         MAP_ADC14_toggleConversionTrigger();

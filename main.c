@@ -54,158 +54,299 @@
 *******************************************************************************/
 
 /* DriverLib Includes */
-
 #include <ti/devices/msp432p4xx/driverlib/driverlib.h>
 
 /* Standard Includes */
 #include <stdint.h>
 #include <stdbool.h>
 
-
 #include "line_sensor.h"
 #include "motor_ctrl.h"
 #include "rfid.h"
+#include "delay.h"
+#include "pathfinding.h"
 
 void propCtrl();
 void followDirections();
+void shortestPath();
+void findEnd();
+int handleIntersection(int cmd, int i);
+void stopAtIntersection();
+void turnAround();
+void flashLED();
 
-int paths[4][9] = {
-                   {FORWARD,RIGHT,FINDEND,0,0,0,0,0,0},
+const int paths[4][15] = {
+                   {FORWARD,RIGHT,FINDEND,SWITCH,WAIT,LEFT,FORWARD,STOP,SWITCH,END},
                    {FORWARD,FORWARD,LEFT,STOP,0,0,0,0,0},
                    {LEFT,RIGHT,RIGHT,FORWARD,FINDEND,0,0,0,0},
-                   {FORWARD,FORWARD,LEFT,LEFT,LEFT,STOP,0,0,0}
+                   {FORWARD,LEFT,STOP,WAIT,LEFT,LEFT,LEFT,END}
 };
-
-const int maxSpeed = 1000;
-const float lineSpeedSlope = maxSpeed/4.5;
-
+int curVertex = 3;
 int face = FORWARD;
 
+const int maxSpeed = 1500;
+const float lineSpeedSlope = maxSpeed/4.5;
+
+
+
 int main(void) {
-    /* Stop Watchdog  */
-    MAP_WDT_A_holdTimer();
-
-    /* Setting DCO to 24MHz */
-    MAP_CS_setDCOCenteredFrequency(CS_DCO_FREQUENCY_24);
-
-    MAP_PCM_setCoreVoltageLevel(PCM_VCORE1);
-
-    MAP_FPU_enableModule();
-
-    MAP_FlashCtl_setWaitState(FLASH_BANK0,2);
-    MAP_FlashCtl_setWaitState(FLASH_BANK1,2);
+    SystemInit(); //24MHz Clock
 
     motors_init();
     line_sensor_init();
     rfid_init();
+
+    int mclk = CS_getMCLK();
 
     irOn();
 
     //start with no speed
     straight(0);
 
-    //get shortest distance ready for all vertexes
-    //dijikstra(0);
+    int ID = 0;
 
-    while(1==1)
+    while(1)
     {
-        int ID = 0;
-        int pathChoice = -1;
+        ID = 0;
+
+        //get shortest distance ready for all vertexes
+        dijikstra(curVertex);
 
         ID = getID();
 
-        if(ID == 363562675) {
-            pathChoice = 0;
-            followDirections(pathChoice);
+        if(ID == 363562828) {
+            shortestPath(7); //(1,3) //card 3
+            //flashLED();
         }
         else if (ID == 363561852) {
-            pathChoice = 1;
-            followDirections(pathChoice);
+            shortestPath(2); //(0,1) card 2
         }
-        else if (ID == 24256125) {
-            pathChoice = 2;
-            followDirections(pathChoice);
+        else if (ID == 367653260) {
+            shortestPath(5); //(2,2) card 4
         }
         else if (ID == 6054415) {
-            pathChoice = 3;
-            followDirections(pathChoice);
+            shortestPath(0); //(1,0) card 1
+        }
+        else if (ID == 3918753) {
+            shortestPath(6); //(0,3) card 5
         }
 
+        delay_ms(100);
     }
 }
 
 void followDirections(int col) {
     int i = 0;
-    int edge = 0;
 
-    while(paths[col][i] != STOP && paths[col][i] != FINDEND) {
-        edge = detectEdge();
+    while(paths[col][i] != END) {
+        int cmd = paths[col][i];
 
-        if(edge == EDGE_NONE || edge == EDGE_STRAIGHT || edge == NO_LINE) {
-            propCtrl();
+        if(cmd == LEFT || cmd == RIGHT || cmd == FORWARD) {
+            i = handleIntersection(cmd, i);
         }
-        else {
-            straight(maxSpeed);
-
-            if(paths[col][i] == LEFT || paths[col][i] == RIGHT) {
-                straight(0);
-                turn(paths[col][i],maxSpeed);
-            }
-
-            edge = detectEdge();
-            while(edge != EDGE_STRAIGHT) {
-                edge = detectEdge();
-                if(paths[col][i] == FORWARD) {
-                    propCtrl();
-                }
-            }
-
-            straight(maxSpeed);
+        else if(cmd == FINDEND) {
+            findEnd();
+            i++;
+        }
+        else if(cmd == SWITCH) {
+            turnAround();
+            i++;
+        }
+        else if(cmd == WAIT) {
+            straight(0);
+            delay_ms(2000);
 
             i++;
         }
-    }
-
-    if(paths[col][i] == FINDEND) {
-        while(edge != NO_LINE) {
-            propCtrl();
-            edge = detectEdge();
+        else if(cmd == STOP) {
+            stopAtIntersection();
+            i++;
         }
 
-        while(edge != EDGE_STRAIGHT) {
-            turnInPlace(LEFT, 500);
-            edge = detectEdge();
-        }
     }
-    else{
-        while(edge == EDGE_NONE || edge == EDGE_STRAIGHT || edge == NO_LINE) {
-            propCtrl();
-            edge = detectEdge();
-        }
-    }
+
+    delay_ms(500);
 
     //stop
     straight(0);
 
-    while(1==1) {
+    return;
+}
+
+void shortestPath(int vertex) {
+    getPath(vertex);
+    getDirections();
+
+    int index = 0;
+
+    while(index != path_index-1) {
+        int norm_dir = directions[index];
+        int dir = 0;
+
+        int f = FORWARD;
+        int l = LEFT;
+        int r = RIGHT;
+        int b = BACKWARD;
+
+        if(face == LEFT) {
+            f = RIGHT;
+            l = FORWARD;
+            r = BACKWARD;
+            b = LEFT;
+        }
+        else if(face == RIGHT) {
+            f = LEFT;
+            l = BACKWARD;
+            r = FORWARD;
+            b = RIGHT;
+        }
+        else if(face == BACKWARD) {
+            f = BACKWARD;
+            l = RIGHT;
+            r = LEFT;
+            b = FORWARD;
+        }
+
+        if(norm_dir == FORWARD) {
+            dir = f;
+        }
+        else if(norm_dir == LEFT) {
+            dir = l;
+        }
+        else if(norm_dir == RIGHT) {
+            dir = r;
+        }
+        else if(norm_dir == BACKWARD) {
+            dir = b;
+        }
+
+        face = norm_dir;
+
+        if(dir == BACKWARD) {
+            turnAround();
+            index++;
+        }
+        else {
+            int i = 0;
+            while(!i) {
+                i = handleIntersection(dir,i);
+            }
+            index++;
+        }
+
     }
+
+    path_index = 0;
+
+    stopAtIntersection();
+    straight(0);
+
+    curVertex = vertex;
+}
+
+int handleIntersection(int cmd, int i) {
+    int edge = getEdge();
+    if(edge == EDGE_NONE || edge == EDGE_STRAIGHT || edge == NO_LINE) {
+        propCtrl();
+    }
+    else {
+        straight(0);
+        delay_ms(1000);
+        straight(maxSpeed);
+
+        if(cmd == LEFT || cmd == RIGHT) {
+            straight(0);
+            turn(cmd,maxSpeed);
+            edge = getEdge();
+            while(edge != EDGE_STRAIGHT) {
+                edge = getEdge();
+
+            }
+        }
+        else {
+            delay_ms(1000);
+        }
+        i++;
+    }
+
+    return i;
+}
+
+void findEnd() {
+    int edge = 0;
+    while(edge != NO_LINE) {
+        propCtrl();
+        edge = getEdge();
+    }
+    delay_ms(1000);
+
+    return;
+}
+
+void turnAround() {
+    turnInPlace(LEFT, 800);
+    delay_ms(2500);
+
+    float line;
+    int edge;
+
+    while(1) {
+        line = readLineAvg();
+        edge = getEdge();
+
+        if (line == 4.5 && edge == EDGE_STRAIGHT) {
+            break;
+        }
+    }
+
+    straight(0);
+
+    return;
+}
+
+void stopAtIntersection() {
+    int edge = EDGE_STRAIGHT;
+    while(edge == EDGE_NONE || edge == EDGE_STRAIGHT || edge == NO_LINE) {
+        propCtrl();
+        edge = getEdge();
+    }
+
+    return;
 }
 
 void propCtrl() {
     float line = readLineAvg();
 
+    /*
     int leftSpeed = line*lineSpeedSlope + .5;
     int rightSpeed = (9-line)*lineSpeedSlope + .5;
 
-    /* this should be in the motor control code */
     if (rightSpeed > maxSpeed) {
         rightSpeed = maxSpeed;
     }
     if (leftSpeed > maxSpeed) {
         leftSpeed = maxSpeed;
     }
+    */
+    int Gain = 500;
+    int rightSpeed = maxSpeed - Gain * (line - 4.5);
+    int leftSpeed = maxSpeed + Gain * (line - 4.5);
 
     setLeftSpeed(1,leftSpeed);
     setRightSpeed(1,rightSpeed);
+
+    return;
+}
+
+void flashLED() {
+    MAP_ADC14_disableInterrupt(ADC_INT7);
+    MAP_GPIO_setAsOutputPin(GPIO_PORT_P4, GPIO_PIN5);
+
+    for(int i = 0; i<20 ; i++) {
+        MAP_GPIO_toggleOutputOnPin(GPIO_PORT_P4, GPIO_PIN5);
+        delay_ms(500);
+    }
+
+    return;
 }
 

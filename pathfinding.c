@@ -7,36 +7,36 @@
 
 #include "pathfinding.h"
 
-int coords[V][2] = {
-                     {0,1},
-                     {1,1},
-                     {1,0},
-                     {2,1},
-                     {3,0},
-                     {3,3},
-                     {2,3},
-                     {3,1},
-                     {4,1}
+static int coords[V][2] = {
+                     {1,0}, //0
+                     {2,0}, //1
+                     {0,1}, //2
+                     {1,1}, //3
+                     {1,2}, //4
+                     {2,2}, //5
+                     {0,3}, //6
+                     {1,3}, //7
+                     {2,3}  //8
 };
 
-int graph[V][V] = {
+static int graph[V][V] = {
                  // 0 1 2 3 4 5 6 7 8
-                   {0,1,0,0,0,0,0,0,0}, // 0
-                   {0,0,1,1,0,0,0,0,0}, // 1
-                   {0,1,0,0,2,0,0,0,0}, // 2
-                   {0,1,0,0,0,0,1,1,0}, // 3
-                   {0,0,2,0,0,0,0,1,0}, // 4
-                   {0,0,0,0,0,0,0,1,0}, // 5
-                   {0,0,0,1,0,0,0,0,0}, // 6
-                   {0,0,0,1,1,1,0,0,1}, // 7
-                   {0,0,0,0,0,0,0,1,0}  // 8
+                   {0,1,0,1,0,0,0,0,0}, // 0
+                   {1,0,0,0,0,2,0,0,0}, // 1
+                   {0,0,0,1,0,0,2,0,0}, // 2
+                   {1,0,1,0,1,0,0,0,0}, // 3
+                   {0,0,0,1,0,1,0,1,0}, // 4
+                   {0,2,0,0,1,0,0,0,1}, // 5
+                   {0,0,2,0,0,0,0,1,0}, // 6
+                   {0,0,0,0,1,0,1,0,1}, // 7
+                   {0,0,0,0,0,1,0,1,0}  // 8
 };
 
-int parent[V] = {0,0,0,0,0,0,0};
+static int parent[V] = {0,0,0,0,0,0,0};
 
-int directions[V] = {0,0,0,0,0,0,0,0,0};
-int path[V] = {0,0,0,0,0,0,0,0};
-int path_index = 0;
+extern int directions[V] = {0,0,0,0,0,0,0,0,0};
+extern int path[V] = {0,0,0,0,0,0,0,0,0};
+extern int path_index = 0;
 
 void dijikstra(int src) {
     path_index = 0;
@@ -51,7 +51,7 @@ void dijikstra(int src) {
     // Initialize all distances as INFINITE and stpSet[] as false
     int i;
     for (i = 0; i < V; i++) {
-        parent[0] = -1;
+        parent[src] = -1;
         dist[i] = 999;
         sptSet[i] = 0;
     }
@@ -131,10 +131,8 @@ void getDirections() {
         int x = coords[point2][0] - coords[point1][0];
         int y = coords[point2][1] - coords[point1][1];
 
-        int dir;
-
         if(x == 0 && y > 0) {
-            dir = FORWARD;
+            directions[i] = FORWARD;
         }
         else if(x == 0 && y < 0) {
             directions[i] = BACKWARD;
@@ -147,4 +145,6 @@ void getDirections() {
         }
 
     }
+
+    return;
 }

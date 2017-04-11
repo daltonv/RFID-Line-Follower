@@ -22,7 +22,8 @@ void line_sensor_init();
 
 void irOff();
 void irOn();
-int detectEdge();
+void detectEdge();
+int getEdge();
 float readLineAvg();
 
 #endif /* LINE_SENSOR_H_ */

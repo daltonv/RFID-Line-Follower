@@ -10,14 +10,19 @@
 
 /* DriverLib Includes */
 #include <ti/devices/msp432p4xx/driverlib/driverlib.h>
+#include "delay.h"
 
-#define LEFT 0
 #define RIGHT 1
+#define LEFT 2
 #define FORWARD 3
 #define BACKWARD 4
 #define STOP 5
 #define FINDEND 6
-#define TIMER_PERIOD 2000
+#define SWITCH 7
+#define END 8
+#define WAIT 9
+
+#define TIMER_PERIOD 2500
 
 void motors_init();
 

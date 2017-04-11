@@ -15,6 +15,7 @@
 
 extern int directions[V];
 extern int path_index;
+extern int path[V];
 
 void dijikstra(int src);
 int minDistance(int dist[], int sptSet[]);

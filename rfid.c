@@ -53,6 +53,8 @@ int getID() {
 
     uint8_t rxdByte;
 
+    while(UCSTTIFG == 0);
+
     int i;
     for(i=0; i<11; i++) {
         while(UCRXIFG == 0) {}
